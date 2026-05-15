@@ -1,0 +1,112 @@
+{
+  "info": {
+    "name": "Library Management System — LMS",
+    "description": "Phase 1 capstone API. Base URL is set via the {{baseUrl}} variable (default http://localhost:8000).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/" }
+    },
+    {
+      "name": "Dashboard stats",
+      "request": { "method": "GET", "url": "{{baseUrl}}/dashboard/stats" }
+    },
+    {
+      "name": "Books — list",
+      "request": { "method": "GET", "url": "{{baseUrl}}/books" }
+    },
+    {
+      "name": "Books — get by id",
+      "request": { "method": "GET", "url": "{{baseUrl}}/books/1" }
+    },
+    {
+      "name": "Books — create",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/books",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Domain-Driven Design\",\n  \"author\": \"Eric Evans\",\n  \"category\": \"Programming\",\n  \"isbn\": \"9780321125217\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Books — update",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/books/1",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": \"Software Engineering\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Books — delete",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/books/16" }
+    },
+    {
+      "name": "Borrowers — list",
+      "request": { "method": "GET", "url": "{{baseUrl}}/borrowers" }
+    },
+    {
+      "name": "Borrowers — create",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/borrowers",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"borrower_name\": \"Diya Patel\",\n  \"email\": \"diya.patel@example.com\",\n  \"phone\": \"9876543299\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Borrow",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/borrow",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"book_id\": 1,\n  \"borrower_id\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Return",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/return",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"transaction_id\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Transactions — list",
+      "request": { "method": "GET", "url": "{{baseUrl}}/transactions" }
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/search?q=programming",
+          "host": ["{{baseUrl}}"],
+          "path": ["search"],
+          "query": [{ "key": "q", "value": "programming" }]
+        }
+      }
+    }
+  ]
+}
