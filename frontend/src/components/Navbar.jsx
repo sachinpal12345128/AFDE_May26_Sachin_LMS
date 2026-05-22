@@ -6,6 +6,7 @@ const links = [
   { to: '/borrowers', label: 'Borrowers' },
   { to: '/transactions', label: 'Transactions' },
   { to: '/search', label: 'Search' },
+  { to: '/analytics', label: 'Analytics' },
 ];
 
 export default function Navbar() {

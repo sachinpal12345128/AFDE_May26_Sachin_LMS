@@ -1,4 +1,4 @@
-// Central axios instance — every API call in the app goes through here.
+// Central axios instance - every API call in the app goes through here.
 // Switch backend URL by setting VITE_API_BASE in a .env file (e.g.
 // VITE_API_BASE=http://localhost:8000) or just edit the default below.
 
@@ -36,7 +36,23 @@ export const searchBooks = (q) =>
 // ---------- Dashboard ----------
 export const dashboardStats = () => api.get('/dashboard/stats').then((r) => r.data);
 
-// Helper — extract a useful message from an axios error
+// ---------- Phase 2 - Analytics ----------
+export const analyticsSummary = () =>
+  api.get('/analytics/summary').then((r) => r.data);
+export const analyticsMostBorrowed = (limit = 10) =>
+  api.get('/analytics/most-borrowed', { params: { limit } }).then((r) => r.data);
+export const analyticsCategoryBorrowing = () =>
+  api.get('/analytics/category-borrowing').then((r) => r.data);
+export const analyticsMonthlyTrend = () =>
+  api.get('/analytics/monthly-trend').then((r) => r.data);
+export const analyticsOverdue = (onlyOpen = false) =>
+  api
+    .get('/analytics/overdue', { params: onlyOpen ? { only_open: true } : {} })
+    .then((r) => r.data);
+export const analyticsEtlRuns = () =>
+  api.get('/analytics/etl-runs').then((r) => r.data);
+
+// Helper - extract a useful message from an axios error
 export function errorMessage(err) {
   return (
     err?.response?.data?.detail ||

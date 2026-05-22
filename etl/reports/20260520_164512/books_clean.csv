@@ -1,0 +1,43 @@
+book_id,title,author,category,isbn,availability_status
+1,Clean Code,Robert C. Martin,Programming,9780132350884,Available
+2,The Pragmatic Programmer,Andrew Hunt,Programming,9780201616224,Available
+3,Designing Data-Intensive Applications,Martin Kleppmann,Programming,9781449373320,Available
+4,Introduction to Algorithms,Thomas H. Cormen,Computer Science,9780262033848,Available
+5,Cracking the Coding Interview,Gayle Laakmann McDowell,Career,9780984782857,Available
+6,Atomic Habits,James Clear,Self-Help,9780735211292,Available
+7,Sapiens: A Brief History of Humankind,Yuval Noah Harari,History,9780062316097,Available
+8,The Lean Startup,Eric Ries,Business,9780307887894,Available
+9,"Thinking, Fast and Slow",Daniel Kahneman,Psychology,9780374533557,Available
+10,The Mythical Man-Month,Fred Brooks,Programming,9780201835953,Available
+11,Refactoring,Martin Fowler,Programming,9780134757599,Available
+12,You Don't Know JS Yet,Kyle Simpson,Programming,9781091210095,Available
+13,Deep Work,Cal Newport,Self-Help,9781455586691,Available
+14,The Phoenix Project,Gene Kim,Business,9780988262508,Available
+15,Site Reliability Engineering,Betsy Beyer,Programming,9781491929124,Available
+16,Code Complete,Steve McConnell,Programming,9780735619678,Available
+17,Domain-Driven Design,Eric Evans,Programming,9780321125217,Available
+18,Working Effectively with Legacy Code,Michael Feathers,Programming,9780131177055,Available
+19,The C Programming Language,Brian Kernighan,Programming,9780131103627,Available
+20,Structure and Interpretation of Computer Programs,Harold Abelson,Computer Science,9780262510875,Available
+21,Artificial Intelligence: A Modern Approach,Stuart Russell,Computer Science,9780136042594,Available
+22,Operating System Concepts,Abraham Silberschatz,Computer Science,9781118063330,Available
+23,Computer Networks,Andrew S. Tanenbaum,Computer Science,9780132126953,Available
+24,Database System Concepts,Abraham Silberschatz,Computer Science,9780073523323,Available
+25,The Art of Computer Programming Vol. 1,Donald Knuth,Computer Science,9780201896831,Available
+26,Zero to One,Peter Thiel,Business,9780804139298,Available
+27,Good to Great,Jim Collins,Business,9780066620992,Available
+28,Built to Last,Jim Collins,Business,9780060566104,Available
+29,The Hard Thing About Hard Things,Ben Horowitz,Business,9780062273208,Available
+30,Measure What Matters,John Doerr,Business,9780525536222,Available
+31,Educated,Tara Westover,Memoir,9780399590504,Available
+32,Becoming,Michelle Obama,Memoir,9781524763138,Available
+33,The Diary of a Young Girl,Anne Frank,Memoir,9780553296983,Available
+34,A Brief History of Time,Stephen Hawking,Science,9780553380163,Available
+35,Cosmos,Carl Sagan,Science,9780345539434,Available
+36,The Selfish Gene,Richard Dawkins,Science,9780198788607,Available
+37,"Guns, Germs, and Steel",Jared Diamond,History,9780393354324,Available
+38,Homo Deus,Yuval Noah Harari,History,9780062464347,Available
+39,The Power of Habit,Charles Duhigg,Self-Help,9780812981605,Available
+40,Mindset,Carol Dweck,Self-Help,9780345472328,Available
+41,The Wealth of Nations,Adam Smith,Unknown,9780199535927,Available
+42,The Republic,Unknown,Philosophy,9780872201361,Available

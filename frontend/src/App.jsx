@@ -5,6 +5,7 @@ import Books from './pages/Books.jsx';
 import Borrowers from './pages/Borrowers.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Search from './pages/Search.jsx';
+import Analytics from './pages/Analytics.jsx';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/borrowers" element={<Borrowers />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

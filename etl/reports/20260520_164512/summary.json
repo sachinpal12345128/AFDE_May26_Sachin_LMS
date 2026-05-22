@@ -1,0 +1,21 @@
+{
+  "run_id": 1,
+  "timestamp": "20260520_164512",
+  "raw_counts": {
+    "books": 45,
+    "borrowers": 39,
+    "transactions": 213
+  },
+  "clean_counts": {
+    "books": 42,
+    "borrowers": 37,
+    "transactions": 200
+  },
+  "analytics_counts": {
+    "most_borrowed": 36,
+    "category_borrowing": 9,
+    "monthly_trend": 13,
+    "overdue": 80
+  },
+  "snapshot_dir": "/sessions/happy-gracious-lovelace/mnt/Library_Management_System_Phase2/etl/reports/20260520_164512"
+}

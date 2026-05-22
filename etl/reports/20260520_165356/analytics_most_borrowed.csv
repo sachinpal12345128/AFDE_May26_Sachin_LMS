@@ -1,0 +1,37 @@
+book_id,title,author,category,borrow_count
+25,The Art of Computer Programming Vol. 1,Donald Knuth,Computer Science,13
+20,Structure and Interpretation of Computer Programs,Harold Abelson,Computer Science,12
+37,"Guns, Germs, and Steel",Jared Diamond,History,12
+9,"Thinking, Fast and Slow",Daniel Kahneman,Psychology,11
+36,The Selfish Gene,Richard Dawkins,Science,11
+12,You Don't Know JS Yet,Kyle Simpson,Programming,10
+22,Operating System Concepts,Abraham Silberschatz,Computer Science,8
+18,Working Effectively with Legacy Code,Michael Feathers,Programming,8
+28,Built to Last,Jim Collins,Business,7
+23,Computer Networks,Andrew S. Tanenbaum,Computer Science,7
+40,Mindset,Carol Dweck,Self-Help,7
+5,Cracking the Coding Interview,Gayle Laakmann McDowell,Career,6
+7,Sapiens: A Brief History of Humankind,Yuval Noah Harari,History,6
+32,Becoming,Michelle Obama,Memoir,6
+21,Artificial Intelligence: A Modern Approach,Stuart Russell,Computer Science,6
+34,A Brief History of Time,Stephen Hawking,Science,6
+30,Measure What Matters,John Doerr,Business,5
+29,The Hard Thing About Hard Things,Ben Horowitz,Business,5
+19,The C Programming Language,Brian Kernighan,Programming,5
+1,Clean Code,Robert C. Martin,Programming,4
+10,The Mythical Man-Month,Fred Brooks,Programming,4
+13,Deep Work,Cal Newport,Self-Help,4
+14,The Phoenix Project,Gene Kim,Business,4
+35,Cosmos,Carl Sagan,Science,4
+8,The Lean Startup,Eric Ries,Business,4
+24,Database System Concepts,Abraham Silberschatz,Computer Science,4
+39,The Power of Habit,Charles Duhigg,Self-Help,3
+3,Designing Data-Intensive Applications,Martin Kleppmann,Programming,3
+38,Homo Deus,Yuval Noah Harari,History,3
+2,The Pragmatic Programmer,Andrew Hunt,Programming,2
+31,Educated,Tara Westover,Memoir,2
+27,Good to Great,Jim Collins,Business,2
+26,Zero to One,Peter Thiel,Business,2
+33,The Diary of a Young Girl,Anne Frank,Memoir,2
+16,Code Complete,Steve McConnell,Programming,1
+15,Site Reliability Engineering,Betsy Beyer,Programming,1

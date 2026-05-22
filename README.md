@@ -1,108 +1,197 @@
-# Library Management System — Phase 1
+# Library Management System - Phase 2 (ETL + Analytics)
 
-**Capstone:** `AFDE_Apr26_Sachin_LMS`
-**Stack:** React (Vite) · FastAPI · SQLite
+**Capstone:** Library_Management_System_Phase2 (extends `AFDE_May26_Sachin_LMS`)
+**Stack:** React (Vite) + Chart.js / FastAPI / SQLite / Pandas ETL
 
-A full-stack web application that digitizes core library operations — managing
-books, borrowers, and borrow/return transactions — with a clean REST API and a
-responsive single-page frontend.
+Phase 2 extends the Phase 1 CRUD application with a Pandas ETL pipeline that
+ingests messy CSV datasets, cleans them, loads analytics-ready tables, and
+powers a new in-app analytics dashboard.
 
 ---
 
-## 1. Project Overview
+## 1. What's new in Phase 2
 
-Libraries in schools, training institutes and small organizations often rely on
-notebooks and spreadsheets to track inventory and lending, which leads to lost
-records, missing books, and no visibility into borrowing history. This project
-replaces that workflow with a centralized web application built around a single
-source of truth (a relational database) and a REST API.
+| Area                | Phase 1                                  | Phase2
+|                                              |
+|---------------------|------------------------------------------|------------------------------------------------------|
+| Data ingestion      | Manual entry via REST API                | Pandas ETL from CSV datasets                         |
+| Database            | books, borrowers, transactions           | + analytics_* reporting tables + etl_run_log         |
+| Backend             | CRUD + search + dashboard                | + `/analytics/*` endpoints                           |
+| Frontend            | Dashboard / Books / Borrowers / Txns     | + Analytics page (charts + overdue table)            |
+| Workflow            | -                                        | `python -m etl.run_etl` rebuilds the DB              |
 
-Phase 1 focuses on the foundational CRUD platform; later phases can layer in
-authentication, analytics, recommendations, and semantic search.
+The four required analytics features are all delivered:
 
-## 2. Features Implemented
+1. **Most borrowed books** -> `/analytics/most-borrowed`
+2. **Category-wise borrowing** -> `/analytics/category-borrowing`
+3. **Monthly borrowing trends** -> `/analytics/monthly-trend`
+4. **Overdue transaction analysis** -> `/analytics/overdue`
 
-- **Books** — create, read, update, delete; filter; availability tracking
-- **Borrowers** — full CRUD with email/phone validation
-- **Borrow / Return** — atomic workflow that flips `availability_status` and
-  records timestamps in a `transactions` table
-- **Search** — case-insensitive across title, author, and category
-- **Dashboard** — live counts of total / available / borrowed books, borrowers,
-  open loans, plus the five most recent transactions
-- **Validation & error handling** — Pydantic on the server, inline error
-  feedback in every form on the client
-- **Responsive UI** — works on phones, tablets and desktops with no JS frameworks
-  beyond React Router
+---
 
-## 3. Technology Stack
-
-| Layer        | Technology                              |
-|--------------|------------------------------------------|
-| Frontend     | React 18, React Router, Axios, Vite     |
-| Styling      | Plain CSS (no Tailwind/MUI)             |
-| Backend      | Python 3.10+, FastAPI, SQLAlchemy 2     |
-| Database     | SQLite (file-based, zero-config)        |
-| API testing  | Postman / curl                          |
-| Version ctrl | Git + GitHub                            |
-
-## 4. Project Structure
+## 2. Project structure
 
 ```
-AFDE_Apr26_Sachin_LMS/
-├── backend/
-│   ├── main.py              # FastAPI app & router wiring
-│   ├── database.py          # SQLAlchemy engine + session factory
-│   ├── models.py            # ORM models: Book, Borrower, Transaction
-│   ├── schemas.py           # Pydantic request/response models
-│   ├── crud.py              # DB operations (pure functions on a Session)
-│   ├── seed_db.py           # Idempotent seed script
-│   └── routers/
-│       ├── books.py
-│       ├── borrowers.py
-│       ├── transactions.py  # /borrow, /return, /transactions
-│       ├── search.py
-│       └── dashboard.py
-├── frontend/
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   └── src/
-│       ├── main.jsx
-│       ├── App.jsx          # Router + layout shell
-│       ├── api.js           # Axios client wrapping all endpoints
-│       ├── styles/global.css
-│       ├── components/      # Navbar, Modal
-│       └── pages/           # Dashboard, Books, Borrowers, Transactions, Search
-├── database/
-│   ├── schema.sql           # Plain-SQL schema for reference / PostgreSQL port
-│   └── seed.sql             # Plain-SQL seed data
-├── docs/
-│   └── API.md               # Full endpoint reference with examples
-├── screenshots/             # UI and Postman screenshots (added during demo)
-├── requirements.txt
-├── .gitignore
-└── README.md
+Library_Management_System_Phase2/
+|-- backend/                      FastAPI app + SQLAlchemy models
+|   |-- main.py
+|   |-- database.py
+|   |-- models.py / schemas.py / crud.py
+|   |-- routers/
+|   |   |-- books.py / borrowers.py / transactions.py / search.py / dashboard.py
+|   |   `-- analytics.py          <-- NEW: serves data produced by ETL
+|   `-- seed_db.py
+|-- etl/                          NEW: Pandas ETL pipeline (Phase 2)
+|   |-- __init__.py
+|   |-- config.py                 paths + DB URL
+|   |-- extract.py                read raw CSVs
+|   |-- transform.py              clean + derive + analytics frames
+|   |-- load.py                   write into SQLite (operational + analytics)
+|   |-- run_etl.py                orchestrator (Extract -> Transform -> Load)
+|   `-- reports/                  per-run CSV snapshots + summary.json
+|-- datasets/                     NEW: input CSVs (297 raw rows)
+|   |-- books.csv
+|   |-- borrowers.csv
+|   `-- transactions.csv
+|-- frontend/                     React 18 + Vite + Chart.js
+|   `-- src/
+|       |-- App.jsx               + /analytics route
+|       |-- api.js                + analytics* helpers
+|       |-- components/Navbar.jsx + Analytics link
+|       `-- pages/Analytics.jsx   NEW: charts + overdue table
+|-- database/
+|   |-- schema.sql                + analytics tables documented
+|   `-- seed.sql
+|-- docs/                         API.md, SETUP.md, postman collection
+|-- screenshots/
+|-- requirements.txt              + pandas, numpy
+`-- README.md                     (this file)
 ```
 
-## 5. Setup Instructions
+---
 
-### 5.1 Backend
+## 3. The ETL workflow
+
+The pipeline is built around three small, single-responsibility modules.
+
+### 3.1 Extract (`etl/extract.py`)
+
+Loads the three raw CSVs **as-is**, with no cleaning. Datasets are deliberately
+dirty (duplicate ISBNs, missing return dates, blank emails, inconsistent
+category casing, stray whitespace) so the Transform stage has something real
+to do.
+
+```
+extract_books()       -> 45 raw rows
+extract_borrowers()   -> 39 raw rows
+extract_transactions()-> 213 raw rows
+```
+
+### 3.2 Transform (`etl/transform.py`)
+
+Each entity has its own cleaning function:
+
+| Entity        | Cleaning rules                                                                 |
+|---------------|-------------------------------------------------------------------------------|
+| books         | strip whitespace; normalize null tokens; drop rows missing isbn/title;        |
+|               | fill missing author/category with "Unknown"; Title-Case category;             |
+|               | drop duplicate isbns                                                          |
+| borrowers     | strip whitespace; drop rows missing email/name; default phone "0000000000";   |
+|               | lower-case email; drop duplicate emails                                       |
+| transactions  | drop rows missing isbn / email / borrow_date; parse dates;                    |
+|               | resolve foreign keys by joining on isbn / email; drop rows that cannot       |
+|               | be linked; drop exact duplicates; derive `loan_days`, `is_returned`,         |
+|               | `is_overdue` (loan > 14 days)                                                |
+
+After cleaning, `build_analytics(books, borrowers, transactions)` produces the
+four reporting frames:
+
+- `most_borrowed`        - GROUP BY book, COUNT(*)
+- `category_borrowing`   - GROUP BY category, COUNT(*)
+- `monthly_trend`        - GROUP BY YYYY-MM(borrow_date), COUNT(*)
+- `overdue`              - rows where `loan_days` > 14
+
+### 3.3 Load (`etl/load.py`)
+
+Writes into the **same** SQLite file the FastAPI backend uses
+(`backend/library.db`) so operational and analytics tables live side-by-side:
+
+- Operational tables (`books`, `borrowers`, `transactions`) are
+  **truncate-and-load** so the database always reflects the cleaned dataset.
+- Analytics tables (`analytics_*`) are **create-or-replace** via
+  `pandas.DataFrame.to_sql(..., if_exists='replace')`.
+- Every run is logged in `etl_run_log` (raw counts vs. clean counts).
+- A timestamped CSV snapshot of every frame is written under
+  `etl/reports/<timestamp>/` for screenshots and debugging.
+
+### 3.4 Run it
+
+From the project root:
 
 ```bash
-cd backend
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
+python -m etl.run_etl
+```
 
-pip install -r ../requirements.txt
-python seed_db.py            # creates library.db with 15 books + 5 borrowers
+Sample output (from a real run):
+
+```
+[1/3] Extract
+  books.csv: 45 rows  borrowers.csv: 39 rows  transactions.csv: 213 rows
+[2/3] Transform
+  books         dropped 3 duplicate isbns
+  borrowers     dropped 2 duplicate emails
+  transactions  dropped 5 missing-date + 3 unlinkable + 5 duplicates
+  analytics built (36 / 9 / 13 / 80 rows)
+[3/3] Load
+  Loaded books=42, borrowers=37, transactions=200
+  Snapshot written to etl/reports/<timestamp>/
+  ETL run id: 1
+```
+
+---
+
+## 4. Dataset details
+
+All three input files live in `datasets/` and total **297 raw rows** (well
+above the 150-record minimum). The pipeline cleans them to **279 records**
+that make it into the operational store.
+
+| File              | Raw rows | Clean rows | Notes                                  |
+|-------------------|----------|-----------|----------------------------------------|
+| books.csv         | 45       | 42        | 3 dup isbns + 2 dirty rows dropped     |
+| borrowers.csv     | 39       | 37        | 2 dup emails dropped                   |
+| transactions.csv  | 213      | 200       | 13 rows dropped (missing/bogus/dup)    |
+
+The transaction dates span the last 12 months and include three classes:
+returned-on-time, returned-late, and still-open. The "still open" rows are the
+ones that show up as overdue in the analytics.
+
+---
+
+## 5. Setup and run
+
+### 5.1 Backend + ETL
+
+```bash
+# from project root
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+# Step 1: run the ETL to (re)build the SQLite database from datasets/
+python -m etl.run_etl
+
+# Step 2: start the API
+cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-The API will be live at **http://localhost:8000** and Swagger UI at
-**http://localhost:8000/docs**.
+- API:     http://localhost:8000
+- Swagger: http://localhost:8000/docs
 
 ### 5.2 Frontend
 
@@ -114,96 +203,66 @@ npm install
 npm run dev
 ```
 
-Vite will start the dev server at **http://localhost:5173**. CORS is already
-configured on the backend, so the two talk to each other out of the box.
+Vite serves the app on http://localhost:5173. The new **Analytics** tab is in
+the top navigation.
 
-### 5.3 Database
-
-The default DB is `backend/library.db`, created automatically the first time
-the server (or `seed_db.py`) runs. To reset:
+### 5.3 Reset the database
 
 ```bash
-rm backend/library.db
-python seed_db.py
+rm backend/library.db   # macOS/Linux
+del backend\library.db  # Windows
+python -m etl.run_etl
 ```
 
-To switch to PostgreSQL, change `DATABASE_URL` in `backend/database.py`. The
-plain SQL in `database/schema.sql` and `database/seed.sql` is provided for
-DBAs who prefer to provision the schema manually.
+---
 
-## 6. API Summary
+## 6. API summary (Phase 2 additions)
 
-Base URL: `http://localhost:8000`
+| Method | Endpoint                              | Description                                |
+|--------|---------------------------------------|--------------------------------------------|
+| GET    | `/analytics/summary`                  | KPI tiles (totals + top book + top cat.)   |
+| GET    | `/analytics/most-borrowed?limit=10`   | Top-N most borrowed books                  |
+| GET    | `/analytics/category-borrowing`       | Borrow count per category                  |
+| GET    | `/analytics/monthly-trend`            | Borrow count per YYYY-MM                   |
+| GET    | `/analytics/overdue?only_open=true`   | Overdue transactions (loan_days > 14)      |
+| GET    | `/analytics/etl-runs`                 | Recent ETL runs (audit log)                |
 
-| Method  | Endpoint              | Description                       |
-|---------|-----------------------|-----------------------------------|
-| GET     | `/`                   | Health check                      |
-| GET     | `/dashboard/stats`    | Aggregate counts for the dashboard|
-| GET     | `/books`              | List all books                    |
-| GET     | `/books/{id}`         | Get a book by ID                  |
-| POST    | `/books`              | Add a new book                    |
-| PUT     | `/books/{id}`         | Update a book                     |
-| DELETE  | `/books/{id}`         | Delete a book                     |
-| GET     | `/borrowers`          | List borrowers                    |
-| GET     | `/borrowers/{id}`     | Get a borrower by ID              |
-| POST    | `/borrowers`          | Add a borrower                    |
-| PUT     | `/borrowers/{id}`     | Update a borrower                 |
-| DELETE  | `/borrowers/{id}`     | Delete a borrower                 |
-| POST    | `/borrow`             | Borrow a book                     |
-| POST    | `/return`             | Return a previously borrowed book |
-| GET     | `/transactions`       | List all transactions             |
-| GET     | `/search?q=...`       | Search books                      |
+All Phase 1 endpoints (`/books`, `/borrowers`, `/borrow`, `/return`,
+`/transactions`, `/search`, `/dashboard/stats`) continue to work unchanged.
 
-Full request / response samples live in [`docs/API.md`](docs/API.md).
+---
 
-## 7. Example Requests
+## 7. Screenshots to capture for submission
 
-```bash
-# List books
-curl http://localhost:8000/books
+Save these into the `screenshots/` folder:
 
-# Add a book
-curl -X POST http://localhost:8000/books \
-     -H "Content-Type: application/json" \
-     -d '{"title":"Domain-Driven Design","author":"Eric Evans","category":"Programming","isbn":"9780321125217"}'
+- `etl_run.png`               - terminal output of `python -m etl.run_etl`
+- `analytics_dashboard.png`   - the new /analytics page
+- `most_borrowed.png`         - top-10 books bar chart
+- `category_borrowing.png`    - category doughnut chart
+- `monthly_trend.png`         - monthly line chart
+- `overdue_table.png`         - overdue transactions table
+- `swagger_analytics.png`     - the /analytics/* endpoints in Swagger UI
+- `etl_runs_history.png`      - ETL run audit table at the bottom of /analytics
 
-# Borrow
-curl -X POST http://localhost:8000/borrow \
-     -H "Content-Type: application/json" \
-     -d '{"book_id":1,"borrower_id":1}'
+---
 
-# Return
-curl -X POST http://localhost:8000/return \
-     -H "Content-Type: application/json" \
-     -d '{"transaction_id":1}'
+## 8. Submission checklist (from Phase 2 common instructions)
 
-# Search
-curl "http://localhost:8000/search?q=programming"
-```
+- [x] Python ETL scripts using Pandas
+- [x] CSV datasets in `datasets/`
+- [x] Clear Extract / Transform / Load stages
+- [x] Cleaned data stored in reporting / analytics tables
+- [x] Frontend dashboard displays the analytics
+- [x] Dataset > 150 records (297 raw / 279 clean)
+- [x] README documents the ETL workflow
+- [ ] GitHub repository with daily commits     (do at submission time)
+- [ ] Screenshots of ETL execution + dashboards (capture after running)
 
-## 8. Screenshots
+---
 
-UI and Postman screenshots are stored in the `screenshots/` folder:
+## 9. License & attribution
 
-- `dashboard.png` — Dashboard with live stats
-- `books.png` — Books listing + create modal
-- `borrowers.png` — Borrowers management
-- `transactions.png` — Borrow / return workflow
-- `search.png` — Search results
-- `swagger.png` — FastAPI auto-generated docs
-- `postman.png` — API test in Postman
-
-## 9. Out of Scope (Phase 1)
-
-Per the project requirement document, the following are intentionally deferred:
-
-- Authentication / authorization
-- Notifications and reminders
-- Late-return fine calculation
-- AI/ML, recommendations, semantic search
-- Cloud deployment
-
-## 10. License & Attribution
-
-Capstone submission for FDE training — Phase 1. Free to reuse for educational
+Capstone submission for FDE training - Phase 2. Builds directly on the
+Phase 1 deliverable (`AFDE_May26_Sachin_LMS`). Free to reuse for educational
 purposes.

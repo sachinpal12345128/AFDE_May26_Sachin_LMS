@@ -1,11 +1,14 @@
 """
-Library Management System — FastAPI entry point.
+Library Management System - FastAPI entry point.
 
 Run with:
     uvicorn main:app --reload --port 8000
 
 Swagger docs are available at http://localhost:8000/docs once the
 server is running.
+
+Phase 2 adds the /analytics/* router, which serves data produced by the
+Pandas ETL pipeline (see etl/run_etl.py).
 """
 
 from fastapi import FastAPI
@@ -13,22 +16,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models
 from database import Base, engine
-from routers import books, borrowers, dashboard, search, transactions
+from routers import analytics, books, borrowers, dashboard, search, transactions
 
-# Create tables on startup (idempotent — only creates if missing)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Library Management System API",
     description=(
-        "REST API for the LMS capstone — manage books, borrowers, "
-        "and borrow/return transactions."
+        "REST API for the LMS capstone. Phase 1 covers books, borrowers, "
+        "and borrow/return transactions. Phase 2 adds /analytics/* endpoints "
+        "backed by the Pandas ETL pipeline (see etl/run_etl.py)."
     ),
-    version="1.0.0",
+    version="2.0.0",
 )
 
-# CORS — open during development so the Vite dev server (port 5173)
-# can talk to the API. Tighten this in production.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -44,14 +45,15 @@ def root():
     return {
         "status": "ok",
         "service": "Library Management System",
-        "version": "1.0.0",
+        "version": "2.0.0",
+        "phase": "2",
         "docs": "/docs",
     }
 
 
-# Mount all feature routers
 app.include_router(books.router)
 app.include_router(borrowers.router)
 app.include_router(transactions.router)
 app.include_router(search.router)
 app.include_router(dashboard.router)
+app.include_router(analytics.router)  # Phase 2 - ETL-backed analytics
